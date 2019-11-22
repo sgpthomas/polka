@@ -16,3 +16,4 @@ function install() {
 
 download
 install
+source ~/.zshrc
