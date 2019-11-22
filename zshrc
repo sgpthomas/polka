@@ -10,12 +10,10 @@ ZSH_THEME="sammythomas"
 # plugins
 plugins=(
   git-prompt-custom
-  k
   colored-man-pages
-  battery-custom
-  zsh-syntax-highlighting
   better-vim
   up-dir
+  zsh-syntax-highlighting
 )
 
 # oh my zsh stuff
