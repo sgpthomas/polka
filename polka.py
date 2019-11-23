@@ -77,7 +77,7 @@ def gather_configs():
     #         print(f.parts)
     #         yield data
 
-def install_repos(repos):
+def install_repos(name, repos):
     for name, config in repos.items():
         if Path(config['dest']).expanduser().exists():
             with Enter(config['dest']):
@@ -87,42 +87,42 @@ def install_repos(repos):
             dest = config['dest']
             os.system(f'git clone {url} {dest}')
 
-def install_dirs(dirs):
+def install_dirs(name, dirs):
     for d in dirs:
         Path(d).expanduser().mkdir(parents=True, exist_ok=True)
 
-def install_touch(touch):
+def install_touch(name, touch):
     for fil in touch:
         os.system(f'touch {fil}')
 
-def install_links(links):
-    for name, dest in links.items():
+def install_links(name, links):
+    for ln, dest in links.items():
         if not Path(dest).expanduser().exists():
-            os.system(f'ln -s {name} {dest}')
+            os.system(f'ln -s {Path.cwd() / name / ln} {dest}')
         else:
             # XXX(sam) deal with this case
             print(f"[WARNING] {dest} exists")
 
-def finalize(script):
+def finalize(name, script):
     for scr in script:
         os.system(scr)
 
-def commit_config(config):
+def commit_config(name, config):
     with nostdout():
         if 'repos' in config:
-            install_repos(config['repos'])
+            install_repos(name, config['repos'])
     with nostdout():
         if 'dirs' in config:
-            install_dirs(config['dirs'])
+            install_dirs(name, config['dirs'])
     with nostdout():
         if 'touch' in config:
-            install_touch(config['touch'])
+            install_touch(name, config['touch'])
     with nostdout():
         if 'links' in config:
-            install_links(config['links'])
+            install_links(name, config['links'])
     with nostdout():
         if 'finalize' in config:
-            finalize(config['finalize'])
+            finalize(name, config['finalize'])
 
 
 ###### Command Line Parsing #######
@@ -143,9 +143,9 @@ def install(args):
         for key in args.configs:
             if key not in configs:
                 raise Exception("Error")
-            commit_config(configs[key])
+            commit_config(key, configs[key])
     else:
-        for config in configs.values():
-            commit_config(config)
+        for key, config in configs.items():
+            commit_config(key, config)
 
 parser.run()
