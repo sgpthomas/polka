@@ -93,15 +93,15 @@ def install_dirs(name, dirs):
 
 def install_touch(name, touch):
     for fil in touch:
-        os.system(f'touch {fil}')
+        Path(fil).resolve().touch()
 
 def install_links(name, links):
     for ln, dest in links.items():
-        if not Path(dest).expanduser().exists():
-            os.system(f'ln -s {Path.cwd() / name / ln} {dest}')
-        else:
-            # XXX(sam) deal with this case
-            print(f"[WARNING] {dest} exists")
+        resolve = Path(dest).expanduser()
+        ln_path = Path.cwd() / name / ln
+        if resolve != ln_path:
+            resolve.unlink(missing_ok=True)
+            resolve.symlink_to(ln_path)
 
 def finalize(name, script):
     for scr in script:
