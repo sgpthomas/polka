@@ -55,13 +55,13 @@ class DummyFile(object):
 @contextlib.contextmanager
 def nostdout():
     print("Starting...", end='', flush=True)
-    save_stdout = sys.stdout
-    sys.stdout = DummyFile()
-    save_stderr = sys.stderr
-    sys.stderr = DummyFile()
+    # save_stdout = sys.stdout
+    # sys.stdout = DummyFile()
+    # save_stderr = sys.stderr
+    # sys.stderr = DummyFile()
     yield
-    sys.stdout = save_stdout
-    sys.stderr = save_stderr
+    # sys.stdout = save_stdout
+    # sys.stderr = save_stderr
     print("Done")
 
 def gather_configs():
@@ -93,14 +93,16 @@ def install_dirs(name, dirs):
 
 def install_touch(name, touch):
     for fil in touch:
-        Path(fil).resolve().touch()
+        Path(fil).expanduser().touch()
 
 def install_links(name, links):
     for ln, dest in links.items():
         resolve = Path(dest).expanduser()
         ln_path = Path.cwd() / name / ln
+        print(resolve, ln_path)
         if resolve != ln_path:
-            resolve.unlink(missing_ok=True)
+            if resolve.is_symlink() or resolve.exists(): 
+                resolve.unlink()
             resolve.symlink_to(ln_path)
 
 def finalize(name, script):
