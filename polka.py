@@ -101,7 +101,7 @@ def install_links(name, links):
         ln_path = Path.cwd() / name / ln
         print(resolve, ln_path)
         if resolve != ln_path:
-            if resolve.is_symlink() or resolve.exists(): 
+            if resolve.is_symlink() or resolve.exists():
                 resolve.unlink()
             resolve.symlink_to(ln_path)
 

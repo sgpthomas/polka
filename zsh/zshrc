@@ -7,12 +7,16 @@ export ZSH="/home/samthomas/.oh-my-zsh"
 # theme name
 ZSH_THEME="sammythomas"
 
+# add custom completions to fpath
+fpath=($ZSH/custom/completions $fpath)
+
 # plugins
 plugins=(
   git-prompt-custom
   colored-man-pages
   better-vim
   up-dir
+  fzf
   zsh-syntax-highlighting
 )
 
@@ -40,13 +44,25 @@ function remake() {
   make $1
 }
 
+function batch-mv() {
+  for f in ${1}*; do
+    mv $f ${f/#${1}/${2}}
+  done
+}
+
+function batch-cp() {
+  for f in ${1}*; do
+    cp $f ${f/#${1}/${2}}
+  done
+}
+
 # clear screen thing
 clear-screen() { echoti clear; zle redisplay; }
 zle -N clear-screen
 
 ###### custom project commands setup ######
 source ~/.zshprojects
-function mkproj() {
+function proj-new() {
   if [ ! -z $1 ]; then
     echo "hash -d $1=$PWD" >> ~/.zshprojects
     source ~/.zshprojects
@@ -55,5 +71,17 @@ function mkproj() {
   fi
 }
 
+# fh - repeat history
+# function _fh {
+#   print -z $( ([ -n "$ZSH_NAME" ] && fc -l 1 || history) | fzf +s --tac | sed -r 's/ *[0-9]*\*? *//' | sed -r 's/\\/\\\\/g')
+# }
+
+# zle -N _fh
+# bindkey "^r" _fh
+
 ### local zsh stuff
 source ~/.zshlocal
+
+source /home/samthomas/.config/broot/launcher/bash/br
+
+autoload -U compinit && compinit
