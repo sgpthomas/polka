@@ -82,6 +82,4 @@ function proj-new() {
 ### local zsh stuff
 source ~/.zshlocal
 
-source /home/samthomas/.config/broot/launcher/bash/br
-
 autoload -U compinit && compinit
